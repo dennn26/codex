@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NeoApple Hub | Jual Beli iPhone 11-17 Pro Max</title>
+    <title>NeoApple Hub | iPhone 11-17 Pro Max</title>
     <meta
       name="description"
-      content="Website end-to-end usaha jual beli iPhone series 11 sampai 17 Pro Max dengan desain futuristik minimalis modern Gen Z."
+      content="Website usaha jual beli iPhone series 11 sampai 17 Pro Max dengan tampilan futuristik premium dan fitur stok real-time."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,66 +17,68 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="grid-bg"></div>
+    <div class="grid-bg" aria-hidden="true"></div>
     <header class="site-header">
       <a class="logo" href="#">NeoApple<span>Hub</span></a>
       <nav>
-        <a href="#katalog">Katalog</a>
+        <a href="#katalog">Stok</a>
         <a href="#tradein">Trade-In</a>
-        <a href="#owner">Owner Stock</a>
-        <a href="#alur">Alur End-to-End</a>
+        <a href="#owner">Panel Owner</a>
+        <a href="#alur">Alur</a>
         <a href="#kontak">Kontak</a>
       </nav>
-      <button id="themeToggle" class="ghost-btn" aria-label="Toggle mode">🌙</button>
+      <button id="themeToggle" class="ghost-btn" aria-label="Ganti tema">🌙</button>
     </header>
 
     <main>
       <section class="hero">
         <div>
-          <p class="tag">🚀 Trusted Apple Trade Ecosystem</p>
-          <h1>
-            Jual beli <span>iPhone 11 — 17 Pro Max</span>
-            super cepat, aman, dan classy.
-          </h1>
+          <p class="tag">⚡ Premium Apple Marketplace</p>
+          <h1>Jual beli <span>iPhone 11 - 17 Pro Max</span> dengan stok live & proses cepat.</h1>
           <p>
-            Platform usaha pribadi lo buat beli unit impian, jual device lama,
-            cek harga real-time, cek sisa stok live, dan checkout anti ribet dalam satu flow.
+            Tampilan modern, transparan, dan semua fitur langsung bisa dipakai: lihat stok, booking,
+            trade-in, sampai update stok dari panel owner.
           </p>
           <div class="hero-cta">
-            <a class="primary-btn" href="#katalog">Lihat Stok Ready</a>
-            <a class="secondary-btn" href="#tradein">Jual iPhone Lo</a>
+            <a class="primary-btn" href="#katalog">Lihat Stok Sekarang</a>
+            <a class="secondary-btn" href="#tradein">Hitung Trade-In</a>
           </div>
           <div class="stats">
-            <article><strong id="totalStockCount">0</strong><span>Total stok aktif</span></article>
-            <article><strong>4.9/5</strong><span>Rating pembeli</span></article>
-            <article><strong>24 jam</strong><span>Quick response</span></article>
+            <article><strong id="totalStockCount">0 unit</strong><span>Total stok aktif</span></article>
+            <article><strong id="readyModelsCount">0 model</strong><span>Model ready</span></article>
+            <article><strong>24/7</strong><span>Respon admin</span></article>
           </div>
         </div>
-        <aside class="glass-card">
-          <h2>Harga Hari Ini</h2>
+        <aside class="glass-card hero-side">
+          <h2>Ringkasan Harga & Stok</h2>
           <ul id="priceTicker"></ul>
-          <small>*Harga & stok update otomatis sesuai input owner.</small>
+          <small>*Harga dan stok akan ikut update ketika owner melakukan perubahan.</small>
         </aside>
       </section>
 
       <section id="katalog" class="section">
         <div class="section-title">
-          <h2>Catalog iPhone Ready Stock</h2>
-          <p>Pembeli bisa lihat sisa stok real-time per model.</p>
+          <h2>Stok iPhone</h2>
+          <p>Pembeli bisa cek ketersediaan unit secara real-time.</p>
+        </div>
+        <div class="catalog-toolbar glass-card">
+          <div class="pill-group" id="stockFilter">
+            <button class="pill is-active" data-filter="all" type="button">Semua</button>
+            <button class="pill" data-filter="ready" type="button">Ready</button>
+            <button class="pill" data-filter="low" type="button">Menipis</button>
+            <button class="pill" data-filter="empty" type="button">Habis</button>
+          </div>
         </div>
         <div id="productGrid" class="product-grid"></div>
       </section>
 
-      <section id="tradein" class="section tradein">
+      <section id="tradein" class="section">
         <div class="section-title">
-          <h2>Form Jual / Trade-In</h2>
-          <p>Isi data, dapet estimasi harga otomatis, lanjut COD/kurir.</p>
+          <h2>Form Trade-In</h2>
+          <p>Isi data unit lama, lalu dapat estimasi harga otomatis.</p>
         </div>
         <form id="tradeinForm" class="glass-card form-grid">
-          <label>
-            Seri iPhone
-            <select id="series" required></select>
-          </label>
+          <label>Seri iPhone <select id="series" required></select></label>
           <label>
             Kondisi
             <select id="condition" required>
@@ -94,10 +96,7 @@
               <option value="1024">1 TB</option>
             </select>
           </label>
-          <label>
-            Battery Health (%)
-            <input id="battery" type="number" min="60" max="100" value="90" required />
-          </label>
+          <label>Battery Health (%) <input id="battery" type="number" min="60" max="100" value="90" required /></label>
           <button class="primary-btn" type="submit">Hitung Estimasi</button>
           <p id="estimateResult" class="result"></p>
         </form>
@@ -105,27 +104,21 @@
 
       <section id="owner" class="section">
         <div class="section-title">
-          <h2>Owner Stock Management</h2>
-          <p>Panel owner untuk update stok masuk/keluar, langsung kelihatan ke pembeli.</p>
+          <h2>Panel Owner - Manajemen Stok</h2>
+          <p>Update stok masuk/keluar dan semua pembeli langsung melihat perubahan.</p>
         </div>
         <form id="stockForm" class="glass-card owner-grid">
+          <label>Pilih Model <select id="ownerSeries" required></select></label>
           <label>
-            Pilih Model
-            <select id="ownerSeries" required></select>
-          </label>
-          <label>
-            Tipe Perubahan
+            Jenis Update
             <select id="stockAction" required>
               <option value="add">Stok Masuk (+)</option>
               <option value="remove">Stok Keluar (-)</option>
-              <option value="set">Set Stok Manual</option>
+              <option value="set">Set Angka Stok</option>
             </select>
           </label>
-          <label>
-            Jumlah Unit
-            <input id="stockQty" type="number" min="1" value="1" required />
-          </label>
-          <button class="primary-btn" type="submit">Update Stok</button>
+          <label>Jumlah Unit <input id="stockQty" type="number" min="1" value="1" required /></label>
+          <button class="primary-btn" type="submit">Simpan Update</button>
           <p id="stockMessage" class="result"></p>
         </form>
       </section>
@@ -135,22 +128,22 @@
           <h2>Alur End-to-End</h2>
         </div>
         <div class="timeline">
-          <article><span>01</span><h3>Lihat Stok Live</h3><p>Cek model + sisa unit biar gak zonk.</p></article>
-          <article><span>02</span><h3>Booking / Ajukan Trade-In</h3><p>Booking unit atau isi form jual device lama.</p></article>
-          <article><span>03</span><h3>Verifikasi & Pembayaran Aman</h3><p>Admin konfirmasi detail lalu proses pembayaran.</p></article>
-          <article><span>04</span><h3>Pengiriman Cepat</h3><p>Same-day Jabodetabek / ekspedisi nasional.</p></article>
+          <article><span>01</span><h3>Cek stok</h3><p>Pilih model yang ready sesuai budget.</p></article>
+          <article><span>02</span><h3>Booking / Trade-In</h3><p>Booking unit baru atau jual device lama.</p></article>
+          <article><span>03</span><h3>Deal aman</h3><p>Verifikasi, pembayaran, dan nota transaksi.</p></article>
+          <article><span>04</span><h3>Unit diterima</h3><p>COD atau pengiriman cepat nasional.</p></article>
         </div>
       </section>
     </main>
 
     <footer id="kontak">
-      <h2>Let’s Deal Today ⚡</h2>
-      <p>DM sekarang buat stok harian, promo, dan nego terbaik.</p>
+      <h2>Deal Hari Ini 🚀</h2>
+      <p>Hubungi admin untuk stok harian dan promo terbaik.</p>
       <div class="hero-cta">
         <a class="primary-btn" href="https://wa.me/6281234567890" target="_blank" rel="noreferrer">WhatsApp</a>
         <a class="secondary-btn" href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
       </div>
-      <small>© 2026 NeoAppleHub. Futuristic Apple Marketplace.</small>
+      <small>© 2026 NeoAppleHub.</small>
     </footer>
 
     <script src="script.js"></script>

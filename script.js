@@ -9,6 +9,7 @@ const initialProducts = [
 ];
 
 const STORAGE_KEY = "neoapplehub-stock-v1";
+let currentFilter = "all";
 
 const formatIDR = (amount) =>
   new Intl.NumberFormat("id-ID", {
@@ -22,6 +23,8 @@ const priceTicker = document.querySelector("#priceTicker");
 const seriesSelect = document.querySelector("#series");
 const ownerSeriesSelect = document.querySelector("#ownerSeries");
 const totalStockCount = document.querySelector("#totalStockCount");
+const readyModelsCount = document.querySelector("#readyModelsCount");
+const stockFilter = document.querySelector("#stockFilter");
 
 const stockForm = document.querySelector("#stockForm");
 const stockAction = document.querySelector("#stockAction");
@@ -34,9 +37,7 @@ const estimateResult = document.querySelector("#estimateResult");
 const savedProducts = localStorage.getItem(STORAGE_KEY);
 const products = savedProducts ? JSON.parse(savedProducts) : initialProducts;
 
-const saveProducts = () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-};
+const saveProducts = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
 
 const getStockLabel = (stock) => {
   if (stock <= 0) return "Habis";
@@ -44,28 +45,46 @@ const getStockLabel = (stock) => {
   return "Ready";
 };
 
-const renderSelectOptions = () => {
-  const options = products
-    .map((product) => `<option value="${product.name}">${product.name}</option>`)
-    .join("");
+const getBadgeClass = (stock) => {
+  if (stock <= 0) return "danger";
+  if (stock <= 2) return "warning";
+  return "success";
+};
 
+const filterProducts = (list) => {
+  if (currentFilter === "ready") return list.filter((product) => product.stock > 2);
+  if (currentFilter === "low") return list.filter((product) => product.stock > 0 && product.stock <= 2);
+  if (currentFilter === "empty") return list.filter((product) => product.stock <= 0);
+  return list;
+};
+
+const renderSelectOptions = () => {
+  const options = products.map((product) => `<option value="${product.name}">${product.name}</option>`).join("");
   seriesSelect.innerHTML = options;
   ownerSeriesSelect.innerHTML = options;
 };
 
 const renderProducts = () => {
-  productGrid.innerHTML = products
+  const filtered = filterProducts(products);
+
+  if (filtered.length === 0) {
+    productGrid.innerHTML = `<article class="product-card"><h3>Tidak ada data</h3><p>Belum ada produk di filter ini.</p></article>`;
+    return;
+  }
+
+  productGrid.innerHTML = filtered
     .map((product) => {
       const disabledAttr = product.stock <= 0 ? "disabled" : "";
-      const badgeClass = product.stock <= 0 ? "danger" : product.stock <= 2 ? "warning" : "success";
+      const fillPercent = Math.min(100, (product.stock / 10) * 100);
       return `<article class="product-card">
       <div class="card-head">
         <h3>${product.name}</h3>
-        <span class="stock-badge ${badgeClass}">${getStockLabel(product.stock)}</span>
+        <span class="stock-badge ${getBadgeClass(product.stock)}">${getStockLabel(product.stock)}</span>
       </div>
       <p>Garansi toko + quality check 32 titik.</p>
       <div class="price">${formatIDR(product.price)}</div>
       <div class="stock-row">Sisa stok: <strong>${product.stock} unit</strong></div>
+      <div class="stock-bar"><span class="stock-fill" style="width:${fillPercent}%"></span></div>
       <button class="secondary-btn" ${disabledAttr}>${product.stock > 0 ? "Booking Unit" : "Kosong"}</button>
     </article>`;
     })
@@ -74,26 +93,32 @@ const renderProducts = () => {
 
 const renderPriceTicker = () => {
   priceTicker.innerHTML = products
-    .map(
-      (product) =>
-        `<li>${product.name}: <strong>${formatIDR(product.price)}</strong> · ${product.stock} unit</li>`
-    )
+    .map((product) => `<li>${product.name}: <strong>${formatIDR(product.price)}</strong> · ${product.stock} unit</li>`)
     .join("");
 };
 
-const renderTotalStock = () => {
-  const totalStock = products.reduce((total, product) => total + product.stock, 0);
-  totalStockCount.textContent = `${totalStock} unit`;
+const renderStats = () => {
+  const total = products.reduce((sum, product) => sum + product.stock, 0);
+  const readyCount = products.filter((product) => product.stock > 0).length;
+  totalStockCount.textContent = `${total} unit`;
+  readyModelsCount.textContent = `${readyCount} model`;
 };
 
 const renderAll = () => {
   renderProducts();
   renderPriceTicker();
-  renderTotalStock();
+  renderStats();
 };
 
-renderSelectOptions();
-renderAll();
+stockFilter.addEventListener("click", (event) => {
+  const filterButton = event.target.closest("button[data-filter]");
+  if (!filterButton) return;
+
+  currentFilter = filterButton.dataset.filter;
+  stockFilter.querySelectorAll(".pill").forEach((pill) => pill.classList.remove("is-active"));
+  filterButton.classList.add("is-active");
+  renderProducts();
+});
 
 tradeinForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -110,8 +135,7 @@ tradeinForm.addEventListener("submit", (event) => {
   const batteryFactor = Math.max(0.75, Math.min(1, battery / 100));
 
   const estimate = Math.round(base * conditionFactor * storageFactor * batteryFactor);
-
-  estimateResult.textContent = `Estimasi harga ${series} kamu: ${formatIDR(estimate)} (final setelah QC).`;
+  estimateResult.textContent = `Estimasi harga ${series}: ${formatIDR(estimate)} (harga final setelah QC).`;
 });
 
 stockForm.addEventListener("submit", (event) => {
@@ -127,27 +151,20 @@ stockForm.addEventListener("submit", (event) => {
     return;
   }
 
-  if (action === "add") {
-    targetProduct.stock += quantity;
-  }
-
-  if (action === "remove") {
-    targetProduct.stock = Math.max(0, targetProduct.stock - quantity);
-  }
-
-  if (action === "set") {
-    targetProduct.stock = quantity;
-  }
+  if (action === "add") targetProduct.stock += quantity;
+  if (action === "remove") targetProduct.stock = Math.max(0, targetProduct.stock - quantity);
+  if (action === "set") targetProduct.stock = quantity;
 
   saveProducts();
   renderAll();
-
-  stockMessage.textContent = `Stok ${model} berhasil di-update jadi ${targetProduct.stock} unit.`;
+  stockMessage.textContent = `Stok ${model} berhasil diupdate menjadi ${targetProduct.stock} unit.`;
 });
 
 const themeToggle = document.querySelector("#themeToggle");
-
 themeToggle.addEventListener("click", () => {
   document.body.classList.toggle("light");
   themeToggle.textContent = document.body.classList.contains("light") ? "☀️" : "🌙";
 });
+
+renderSelectOptions();
+renderAll();
