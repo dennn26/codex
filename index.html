@@ -23,6 +23,7 @@
       <nav>
         <a href="#katalog">Katalog</a>
         <a href="#tradein">Trade-In</a>
+        <a href="#owner">Owner Stock</a>
         <a href="#alur">Alur End-to-End</a>
         <a href="#kontak">Kontak</a>
       </nav>
@@ -39,14 +40,14 @@
           </h1>
           <p>
             Platform usaha pribadi lo buat beli unit impian, jual device lama,
-            cek harga real-time, dan checkout anti ribet dalam satu flow.
+            cek harga real-time, cek sisa stok live, dan checkout anti ribet dalam satu flow.
           </p>
           <div class="hero-cta">
             <a class="primary-btn" href="#katalog">Lihat Stok Ready</a>
             <a class="secondary-btn" href="#tradein">Jual iPhone Lo</a>
           </div>
           <div class="stats">
-            <article><strong>1.2K+</strong><span>Transaksi sukses</span></article>
+            <article><strong id="totalStockCount">0</strong><span>Total stok aktif</span></article>
             <article><strong>4.9/5</strong><span>Rating pembeli</span></article>
             <article><strong>24 jam</strong><span>Quick response</span></article>
           </div>
@@ -54,14 +55,14 @@
         <aside class="glass-card">
           <h2>Harga Hari Ini</h2>
           <ul id="priceTicker"></ul>
-          <small>*Harga bisa berubah sesuai kondisi unit & kapasitas.</small>
+          <small>*Harga & stok update otomatis sesuai input owner.</small>
         </aside>
       </section>
 
       <section id="katalog" class="section">
         <div class="section-title">
           <h2>Catalog iPhone Ready Stock</h2>
-          <p>Range dari iPhone 11 sampai iPhone 17 Pro Max.</p>
+          <p>Pembeli bisa lihat sisa stok real-time per model.</p>
         </div>
         <div id="productGrid" class="product-grid"></div>
       </section>
@@ -102,14 +103,41 @@
         </form>
       </section>
 
+      <section id="owner" class="section">
+        <div class="section-title">
+          <h2>Owner Stock Management</h2>
+          <p>Panel owner untuk update stok masuk/keluar, langsung kelihatan ke pembeli.</p>
+        </div>
+        <form id="stockForm" class="glass-card owner-grid">
+          <label>
+            Pilih Model
+            <select id="ownerSeries" required></select>
+          </label>
+          <label>
+            Tipe Perubahan
+            <select id="stockAction" required>
+              <option value="add">Stok Masuk (+)</option>
+              <option value="remove">Stok Keluar (-)</option>
+              <option value="set">Set Stok Manual</option>
+            </select>
+          </label>
+          <label>
+            Jumlah Unit
+            <input id="stockQty" type="number" min="1" value="1" required />
+          </label>
+          <button class="primary-btn" type="submit">Update Stok</button>
+          <p id="stockMessage" class="result"></p>
+        </form>
+      </section>
+
       <section id="alur" class="section">
         <div class="section-title">
           <h2>Alur End-to-End</h2>
         </div>
         <div class="timeline">
-          <article><span>01</span><h3>Pilih / Ajukan Unit</h3><p>Pilih produk atau submit device lo.</p></article>
-          <article><span>02</span><h3>Verifikasi & Deal</h3><p>Admin cek detail, kasih harga final transparan.</p></article>
-          <article><span>03</span><h3>Pembayaran Aman</h3><p>Transfer, e-wallet, atau cash (COD terjadwal).</p></article>
+          <article><span>01</span><h3>Lihat Stok Live</h3><p>Cek model + sisa unit biar gak zonk.</p></article>
+          <article><span>02</span><h3>Booking / Ajukan Trade-In</h3><p>Booking unit atau isi form jual device lama.</p></article>
+          <article><span>03</span><h3>Verifikasi & Pembayaran Aman</h3><p>Admin konfirmasi detail lalu proses pembayaran.</p></article>
           <article><span>04</span><h3>Pengiriman Cepat</h3><p>Same-day Jabodetabek / ekspedisi nasional.</p></article>
         </div>
       </section>
